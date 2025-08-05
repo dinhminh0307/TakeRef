@@ -5,6 +5,7 @@ import './App.css'
 import NavBar from './components/NavBar/NavBar'
 import { BrowserRouter, Router, Routes, Route } from 'react-router-dom'
 import WelComePage from './pages/WelcomePage/Content'
+import Footer from './components/Footer/Footer'
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </main>
+      <Footer></Footer>
     </>
   )
 }

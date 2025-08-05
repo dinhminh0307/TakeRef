@@ -1,5 +1,6 @@
 import React from 'react';
 import WelComeCard from '../../components/WelcomeCard/WelComeCard';
+import Footer from '../../components/Footer/Footer';
 
 const WelComePage: React.FC = () => {
     return(
