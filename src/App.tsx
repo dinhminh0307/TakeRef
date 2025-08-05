@@ -6,6 +6,7 @@ import NavBar from './components/NavBar/NavBar'
 import { BrowserRouter, Router, Routes, Route } from 'react-router-dom'
 import WelComePage from './pages/WelcomePage/Content'
 import Footer from './components/Footer/Footer'
+import AuthPage from './pages/Auth/Content'
 
 function App() {
   return (
@@ -15,6 +16,9 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path='/' element={<WelComePage/>}/>
+            <Route path='/auth' element={<AuthPage/>}/>
+            <Route path='/login' element={<AuthPage/>}/>
+            <Route path='/signup' element={<AuthPage/>}/>
           </Routes>
         </BrowserRouter>
       </main>

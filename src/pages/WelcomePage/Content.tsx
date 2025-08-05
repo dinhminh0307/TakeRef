@@ -1,8 +1,15 @@
 import React from 'react';
 import WelComeCard from '../../components/WelcomeCard/WelComeCard';
 import Footer from '../../components/Footer/Footer';
+import { useNavigate } from 'react-router-dom';
 
 const WelComePage: React.FC = () => {
+    const navigate = useNavigate();
+
+    const onGetStartedClicked = () => {
+        navigate("/auth");
+    }
+
     return(
         <>
             <div className="container-fluid py-5">
@@ -15,7 +22,9 @@ const WelComePage: React.FC = () => {
                 </p>
               </div>
             </div>
-            
+            <div className='text-center mb-4'>
+                <button onClick={onGetStartedClicked} type="button" className="btn btn-outline-success btn-lg">Get Started</button>
+            </div>
             <div className="row">
               {/* APA Style Card */}
               <WelComeCard
