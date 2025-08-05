@@ -1,8 +1,25 @@
+/* Override Bootstrap's body margin/padding */
+body {
+  margin: 0 !important;
+  padding-top: 60px !important; /* Same height as navbar */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+}
+
+main {
+  padding: 2rem 1rem !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
 }
 
 .logo {

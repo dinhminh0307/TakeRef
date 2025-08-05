@@ -1,0 +1,125 @@
+/* Welcome Card Styles */
+.welcome-card {
+  transition: all 0.3s ease !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.welcome-card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.welcome-card .card-body {
+  padding: 2rem 1.5rem !important;
+}
+
+/* Icon Styles */
+.welcome-card-icon {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.welcome-card-icon .default-icon {
+  width: 60px !important;
+  height: 60px !important;
+  background: linear-gradient(135deg, #a3e635, #84cc16) !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  font-size: 1.5rem !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(163, 230, 53, 0.3) !important;
+}
+
+.welcome-card-icon .custom-icon {
+  width: 60px !important;
+  height: 60px !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  font-size: 1.5rem !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Title Styles */
+.welcome-card-title {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+  margin-bottom: 1rem !important;
+  line-height: 1.4 !important;
+}
+
+/* Description Styles */
+.welcome-card-description {
+  font-size: 0.95rem !important;
+  line-height: 1.6 !important;
+  color: #6b7280 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .welcome-card .card-body {
+    padding: 1.5rem 1rem !important;
+  }
+  
+  .welcome-card-icon .default-icon,
+  .welcome-card-icon .custom-icon {
+    width: 50px !important;
+    height: 50px !important;
+    font-size: 1.25rem !important;
+  }
+  
+  .welcome-card-title {
+    font-size: 1.1rem !important;
+  }
+  
+  .welcome-card-description {
+    font-size: 0.9rem !important;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .welcome-card {
+    background: #1f2937 !important;
+    border-color: #374151 !important;
+  }
+  
+  .welcome-card-title {
+    color: #ffffff !important;
+  }
+  
+  .welcome-card-description {
+    color: #d1d5db !important;
+  }
+}
+
+/* Custom icon variants */
+.welcome-card-icon .icon-blue {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+.welcome-card-icon .icon-green {
+  background: linear-gradient(135deg, #10b981, #047857) !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+}
+
+.welcome-card-icon .icon-purple {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3) !important;
+}
+
+.welcome-card-icon .icon-orange {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3) !important;
+}
