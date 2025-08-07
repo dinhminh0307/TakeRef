@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import './Content.css';
-import sendLoginRequest from './apis/AuthAPI';
 import { useNavigate } from 'react-router-dom';
+import { sendLoginRequest, sendRegisterRequest } from './apis/AuthAPI';
 
 const AuthPage: React.FC = () => {
+  const firstNameRef = useRef<HTMLInputElement>(null);
+  const lastNameRef = useRef<HTMLInputElement>(null);
+  // const university = useRef<HTMLInputElement>(null);
+
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -24,7 +28,6 @@ const AuthPage: React.FC = () => {
     console.log('Form submitted:', formData);
     if(!isSignUp) {
       try {
-        console.log("sending request")
         const response = await sendLoginRequest(formData);
         if(response === null) {
           console.log("error");
@@ -32,6 +35,25 @@ const AuthPage: React.FC = () => {
           console.log("Response: ", response);
           navigate('/dashboard');
         }
+      } catch(e) {
+        console.log(e);
+      }
+    } else {
+      try {
+        const body = {
+          student_id: 0,
+          email: formData.email,
+          password: formData.password,
+          firstName: firstNameRef.current?.value,
+          lastName: lastNameRef.current?.value,
+          university: "RMIT University"
+        }
+
+        const response = await sendRegisterRequest(body);
+        if(response !== null) {
+          console.log(response);
+          navigate('/dashboard')
+        } 
       } catch(e) {
         console.log(e);
       }
@@ -155,7 +177,7 @@ const AuthPage: React.FC = () => {
                     <input
                       type='input'
                       className="form-control auth-input"
-                      id="firstName"
+                      ref={firstNameRef}
                       name="firstName"
                       placeholder="First Name"
                       required
@@ -168,7 +190,7 @@ const AuthPage: React.FC = () => {
                     <input
                       type="input"
                       className="form-control auth-input"
-                      id="lastName"
+                      ref={lastNameRef}
                       name="lastName"
                       placeholder="Last Name"
                       required
