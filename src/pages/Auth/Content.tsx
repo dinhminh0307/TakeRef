@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import './Content.css';
+import sendLoginRequest from './apis/AuthAPI';
+import { useNavigate } from 'react-router-dom';
 
 const AuthPage: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    rememberMe: false
   });
+  const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -17,9 +19,23 @@ const AuthPage: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
+    if(!isSignUp) {
+      try {
+        console.log("sending request")
+        const response = await sendLoginRequest(formData);
+        if(response === null) {
+          console.log("error");
+        } else {
+          console.log("Response: ", response);
+          navigate('/dashboard');
+        }
+      } catch(e) {
+        console.log(e);
+      }
+    }
   };
 
   return (
@@ -118,7 +134,6 @@ const AuthPage: React.FC = () => {
                         type="checkbox"
                         id="rememberMe"
                         name="rememberMe"
-                        checked={formData.rememberMe}
                         onChange={handleInputChange}
                       />
                       <label className="form-check-label text-muted auth-checkbox-label" htmlFor="rememberMe">

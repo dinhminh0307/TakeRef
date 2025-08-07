@@ -7,6 +7,7 @@ import { BrowserRouter, Router, Routes, Route } from 'react-router-dom'
 import WelComePage from './pages/WelcomePage/Content'
 import Footer from './components/Footer/Footer'
 import AuthPage from './pages/Auth/Content'
+import StudentDashBoardPage from './pages/DashBoard/Content'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path='/auth' element={<AuthPage/>}/>
             <Route path='/login' element={<AuthPage/>}/>
             <Route path='/signup' element={<AuthPage/>}/>
+            <Route path='/dashboard' element={<StudentDashBoardPage/>}/>
           </Routes>
         </BrowserRouter>
       </main>
