@@ -8,6 +8,7 @@ import WelComePage from './pages/WelcomePage/Content'
 import Footer from './components/Footer/Footer'
 import AuthPage from './pages/Auth/Content'
 import StudentDashBoardPage from './pages/DashBoard/Content'
+import SubscriptionPageContent from './pages/SubscriptionPage/Content'
 
 function App() {
   const [isLogin, setLogin] = useState();
@@ -22,7 +23,7 @@ function App() {
             <Route path='/auth' element={<AuthPage setLogin={setLogin}/>}/>
             <Route path='/login' element={<AuthPage setLogin={setLogin}/>}/>
             <Route path='/signup' element={<AuthPage setLogin={setLogin}/>}/>
-            
+            <Route path='/prices' element={<SubscriptionPageContent/>}/>
           </Routes>
         </BrowserRouter>
       </main>

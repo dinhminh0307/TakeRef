@@ -40,8 +40,8 @@ const NavBar: React.FC<NavBarProps> = ({ className = '' }) => {
               </a>
             </li>
             <li className="nav-item">
-              <a href="/services" className="nav-link" onClick={closeMenu}>
-                Services
+              <a href="/prices" className="nav-link" onClick={closeMenu}>
+                Prices
               </a>
             </li>
             <li className="nav-item">
