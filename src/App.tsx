@@ -9,25 +9,61 @@ import Footer from './components/Footer/Footer'
 import AuthPage from './pages/Auth/Content'
 import StudentDashBoardPage from './pages/DashBoard/Content'
 import SubscriptionPageContent from './pages/SubscriptionPage/Content'
+import CitationPage from './pages/Citation/Content'
 
 function App() {
   const [isLogin, setLogin] = useState();
   return (
     <>
-      <NavBar />
-      <main>
-        <BrowserRouter>
-          <Routes>
-            {isLogin && <Route path='/' element={<StudentDashBoardPage/>}/>}
-            {!isLogin && <Route path='/' element={<WelComePage/>}/>}
-            <Route path='/auth' element={<AuthPage setLogin={setLogin}/>}/>
-            <Route path='/login' element={<AuthPage setLogin={setLogin}/>}/>
-            <Route path='/signup' element={<AuthPage setLogin={setLogin}/>}/>
-            <Route path='/prices' element={<SubscriptionPageContent/>}/>
-          </Routes>
-        </BrowserRouter>
-      </main>
-      <Footer></Footer>
+    <NavBar />
+      <BrowserRouter>
+        <Routes>
+          {/* Full screen routes without navbar/footer */}
+          {isLogin && <Route path='/' element={<CitationPage/>}/>}
+          
+          {/* Routes with navbar/footer */}
+          {!isLogin && <Route path='/' element={
+            <>
+              <main>
+                <WelComePage/>
+              </main>
+              <Footer />
+            </>
+          }/>}
+          <Route path='/auth' element={
+            <>
+              <main>
+                <AuthPage setLogin={setLogin}/>
+              </main>
+              <Footer />
+            </>
+          }/>
+          <Route path='/login' element={
+            <>
+              <main>
+                <AuthPage setLogin={setLogin}/>
+              </main>
+              <Footer />
+            </>
+          }/>
+          <Route path='/signup' element={
+            <>
+              <main>
+                <AuthPage setLogin={setLogin}/>
+              </main>
+              <Footer />
+            </>
+          }/>
+          <Route path='/prices' element={
+            <>
+              <main>
+                <SubscriptionPageContent/>
+              </main>
+              <Footer />
+            </>
+          }/>
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }
