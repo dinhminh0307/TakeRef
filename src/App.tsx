@@ -10,17 +10,19 @@ import AuthPage from './pages/Auth/Content'
 import StudentDashBoardPage from './pages/DashBoard/Content'
 
 function App() {
+  const [isLogin, setLogin] = useState();
   return (
     <>
       <NavBar />
       <main>
         <BrowserRouter>
           <Routes>
-            <Route path='/' element={<WelComePage/>}/>
-            <Route path='/auth' element={<AuthPage/>}/>
-            <Route path='/login' element={<AuthPage/>}/>
-            <Route path='/signup' element={<AuthPage/>}/>
-            <Route path='/dashboard' element={<StudentDashBoardPage/>}/>
+            {isLogin && <Route path='/' element={<StudentDashBoardPage/>}/>}
+            {!isLogin && <Route path='/' element={<WelComePage/>}/>}
+            <Route path='/auth' element={<AuthPage setLogin={setLogin}/>}/>
+            <Route path='/login' element={<AuthPage setLogin={setLogin}/>}/>
+            <Route path='/signup' element={<AuthPage setLogin={setLogin}/>}/>
+            
           </Routes>
         </BrowserRouter>
       </main>

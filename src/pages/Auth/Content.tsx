@@ -3,7 +3,7 @@ import './Content.css';
 import { useNavigate } from 'react-router-dom';
 import { sendLoginRequest, sendRegisterRequest } from './apis/AuthAPI';
 
-const AuthPage: React.FC = () => {
+const AuthPage: React.FC<{setLogin: any}> = ({setLogin}) => {
   const firstNameRef = useRef<HTMLInputElement>(null);
   const lastNameRef = useRef<HTMLInputElement>(null);
   // const university = useRef<HTMLInputElement>(null);
@@ -33,7 +33,8 @@ const AuthPage: React.FC = () => {
           console.log("error");
         } else {
           console.log("Response: ", response);
-          navigate('/dashboard');
+          setLogin(true);
+          navigate('/');
         }
       } catch(e) {
         console.log(e);
