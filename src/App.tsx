@@ -1,18 +1,23 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
 import './App.css'
 import NavBar from './components/NavBar/NavBar'
 import { BrowserRouter, Router, Routes, Route } from 'react-router-dom'
 import WelComePage from './pages/WelcomePage/Content'
 import Footer from './components/Footer/Footer'
 import AuthPage from './pages/Auth/Content'
-import StudentDashBoardPage from './pages/DashBoard/Content'
 import SubscriptionPageContent from './pages/SubscriptionPage/Content'
 import CitationPage from './pages/Citation/Content'
 
 function App() {
-  const [isLogin, setLogin] = useState();
+  const [isLogin, setLogin] = useState(() => {
+    const savedLoginState = localStorage.getItem('isLogin');
+    return savedLoginState ? JSON.parse(savedLoginState) : false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('isLogin', JSON.stringify(isLogin));
+  }, [isLogin]);
+  
   return (
     <>
     <NavBar />

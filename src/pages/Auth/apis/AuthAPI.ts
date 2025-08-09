@@ -8,6 +8,7 @@ export async function  sendLoginRequest(body: any): Promise<any> {
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify(body)
         }
     );
