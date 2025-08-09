@@ -1,7 +1,5 @@
 export default function checkTokenExpired(): boolean {
-    const token = localStorage.getItem("accessToken");
-    if(token === null) {
-        return false;
-    }
-    return true;
+    const cookies = document.cookie.split('; ');
+    // return true if token not exist
+    return !cookies.some(cookie => cookie.startsWith(`${"accessToken"}=`));
 }
