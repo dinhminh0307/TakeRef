@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import './Content.css';
 import { useNavigate } from 'react-router-dom';
 import { sendLoginRequest, sendRegisterRequest } from './apis/AuthAPI';
+import LoadingSpinner from '../../components/LoadingSpiner/Content';
 
 const AuthPage: React.FC<{setLogin: any}> = ({setLogin}) => {
   const firstNameRef = useRef<HTMLInputElement>(null);
@@ -13,6 +14,7 @@ const AuthPage: React.FC<{setLogin: any}> = ({setLogin}) => {
     email: '',
     password: '',
   });
+  const [isLoading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,7 +27,7 @@ const AuthPage: React.FC<{setLogin: any}> = ({setLogin}) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    setLoading(true);
     if(!isSignUp) {
       try {
         const response = await sendLoginRequest(formData);
@@ -34,9 +36,11 @@ const AuthPage: React.FC<{setLogin: any}> = ({setLogin}) => {
         } else {
           console.log("Response: ", response);
           setLogin(true);
+          setLoading(false);
           navigate('/');
         }
       } catch(e) {
+        setLoading(false);
         console.log(e);
       }
     } else {
@@ -52,10 +56,11 @@ const AuthPage: React.FC<{setLogin: any}> = ({setLogin}) => {
 
         const response = await sendRegisterRequest(body);
         if(response !== null) {
-          console.log(response);
+          setLoading(false);
           navigate('/dashboard')
         } 
       } catch(e) {
+        setLoading(false);
         console.log(e);
       }
     }
@@ -169,7 +174,6 @@ const AuthPage: React.FC<{setLogin: any}> = ({setLogin}) => {
                   </div>
                 )}
 
-                {/* Confirm Password for Sign Up */}
                 {isSignUp && (
                   <div className="auth-form-group">
                     <label htmlFor="firstName" className="form-label text-muted auth-form-label">
@@ -213,9 +217,13 @@ const AuthPage: React.FC<{setLogin: any}> = ({setLogin}) => {
                 )}
 
                 {/* Submit Button */}
-                <button type="submit" className="btn w-100 mb-3 auth-submit-btn">
+                {/* Confirm Password for Sign Up */}
+                {isLoading ?<LoadingSpinner size="sm" className="me-2"/>
+                      :
+                      <button type="submit" className="btn w-100 mb-3 auth-submit-btn">
                   {isSignUp ? 'Create Account' : 'Sign In'}
-                </button>
+                </button>}
+                
               </form>
 
               {/* Divider */}
