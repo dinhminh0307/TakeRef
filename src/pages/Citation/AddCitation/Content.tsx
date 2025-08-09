@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import LoadingSpinner from '../../../components/LoadingSpiner/Content';
+import { sendRmitHarvardWebsiteCitationRequest } from '../apis/CitationAPI';
+import FormattedCitation, { formatCitationWithItalics, type CitationResponse } from '../../../utils/format/format';
 
 interface AddCitationModalProps {
   show: boolean;
@@ -15,6 +18,7 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
   const [url, setUrl] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [citationResult, setCitationResult] = useState('');
+  const [italicSentences, setItalicSentences] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const citationTypes: CitationType[] = [
@@ -36,34 +40,24 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
     }
 
     setIsLoading(true);
+
+    const body = {
+      "citationid": 0,
+      "title": "",
+      "typeid": 0,
+      "type": "",
+      "url": url
+    }
     
     try {
-      const mockCitation = generateMockCitation(url, selectedType);
-      setCitationResult(mockCitation);
+      const response: CitationResponse = await sendRmitHarvardWebsiteCitationRequest(body);
+      setCitationResult(response.content);
+      setItalicSentences(response.italic_sentence || []);
     } catch (error) {
       console.error('Error generating citation:', error);
       alert('Error generating citation. Please try again.');
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const generateMockCitation = (url: string, type: string): string => {
-    // Mock citation generator - replace with actual citation API
-    const domain = new URL(url).hostname;
-    const currentDate = new Date().toISOString().split('T')[0];
-    
-    switch (type) {
-      case 'journal-article':
-        return `Author, A. (${new Date().getFullYear()}). "Sample Article Title from ${domain}." Journal Name, 10(2), 123-145. Retrieved from ${url}`;
-      case 'webpage':
-        return `Website Author. (${new Date().getFullYear()}). "Page Title." ${domain}. Retrieved ${currentDate}, from ${url}`;
-      case 'book':
-        return `Author, A. (${new Date().getFullYear()}). Book Title. Publisher. Retrieved from ${url}`;
-      case 'conference-paper':
-        return `Author, A. (${new Date().getFullYear()}). "Paper Title." In Conference Proceedings (pp. 123-130). ${domain}.`;
-      default:
-        return `Author, A. (${new Date().getFullYear()}). "Title from ${domain}." Retrieved ${currentDate}, from ${url}`;
     }
   };
 
@@ -73,16 +67,20 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
       return;
     }
 
+    // Save the formatted citation with italics
+    const formattedCitation = formatCitationWithItalics(citationResult, italicSentences);
+
     onSave({
       url,
       type: selectedType,
-      result: citationResult
+      result: formattedCitation
     });
 
     // Reset form
     setUrl('');
     setSelectedType('');
     setCitationResult('');
+    setItalicSentences([]);
     onHide();
   };
 
@@ -90,6 +88,7 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
     setUrl('');
     setSelectedType('');
     setCitationResult('');
+    setItalicSentences([]);
     onHide();
   };
 
@@ -158,7 +157,7 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
                 >
                   {isLoading ? (
                     <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                      <LoadingSpinner size="sm" className="me-2" />
                       Generating...
                     </>
                   ) : (
@@ -175,15 +174,23 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
                 <label htmlFor="citationResult" className="form-label fw-semibold">
                   Citation Result
                 </label>
-                <textarea
+                <div
                   className="form-control"
-                  id="citationResult"
-                  rows={4}
-                  placeholder="Generated citation will appear here..."
-                  value={citationResult}
-                  readOnly
-                  style={{ backgroundColor: '#f8f9fa' }}
-                />
+                  style={{ 
+                    backgroundColor: '#f8f9fa', 
+                    minHeight: '100px',
+                    padding: '12px'
+                  }}
+                >
+                  {citationResult ? (
+                    <FormattedCitation 
+                      content={citationResult} 
+                      italicSentences={italicSentences} 
+                    />
+                  ) : (
+                    <span className="text-muted">Generated citation will appear here...</span>
+                  )}
+                </div>
               </div>
             </form>
           </div>
