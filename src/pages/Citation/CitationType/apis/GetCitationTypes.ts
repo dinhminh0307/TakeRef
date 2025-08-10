@@ -1,6 +1,6 @@
 import { ResourceNotFoundError } from "../../../../utils/exceptions/exception";
 
-export async function getAllCitationType() {
+export async function getAllCitationType(): Promise<any> {
     const apiUrl = import.meta.env.VITE_API_BASE_URL + '/citation/type/get';
     const response = await fetch(
         apiUrl,

@@ -5,7 +5,7 @@ import { getAllCitationType } from './apis/GetCitationTypes';
 import { ResourceNotFoundError } from '../../../utils/exceptions/exception';
 
 interface CitationType {
-  type_id: string;
+  type_id: number;
   name: string;
   description: string;
 }
@@ -17,15 +17,11 @@ const CitationTypePage: React.FC = () => {
 
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const handleSaveCitationType = (newType: { name: string; description: string }) => {
-    const citationType = {
-        type_id: (citationTypes.length + 1).toString(),
-        name: newType.name,
-        description: newType.description
-    };
+  const handleSaveCitationType = (newType: {type_id: number, name: string; description: string }) => {
     
-    setCitationTypes([...citationTypes, citationType]);
+    setCitationTypes([...citationTypes, newType]);
     console.log('New citation type saved:', newType);
+    
     };
 
   const handleSidebarClick = (itemId: string) => {
@@ -55,7 +51,7 @@ const CitationTypePage: React.FC = () => {
     console.log('Opening new citation type modal');
   };
 
-  const handleAction = (action: string, typeId: string) => {
+  const handleAction = (action: string, typeId: number) => {
     console.log(`${action} citation type ${typeId}`);
   };
 

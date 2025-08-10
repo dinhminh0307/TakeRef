@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import LoadingSpinner from '../../../components/LoadingSpiner/Content';
+import { saveCitationType } from './apis/CitationTypeApi';
 
 interface AddCitationTypeModalProps {
   show: boolean;
   onHide: () => void;
-  onSave: (citationType: { name: string; description: string }) => void;
+  onSave: (citationType: { type_id: number, name: string; description: string }) => void;
 }
 
 const AddCitationTypeModal: React.FC<AddCitationTypeModalProps> = ({ show, onHide, onSave }) => {
@@ -21,12 +22,17 @@ const AddCitationTypeModal: React.FC<AddCitationTypeModalProps> = ({ show, onHid
     setIsLoading(true);
 
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+        const body = {
+            type_id: 0,
+            name: name,
+            description: description
+        }
+      const response = await saveCitationType(body);
       
       onSave({
-        name: name.trim(),
-        description: description.trim()
+        type_id: response.type_id,
+        name: response.name.trim(),
+        description: response.description.trim()
       });
 
       // Reset form

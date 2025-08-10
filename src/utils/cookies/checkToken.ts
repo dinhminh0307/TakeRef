@@ -1,5 +1,20 @@
-export default function checkTokenExpired(): boolean {
-    const cookies = document.cookie.split('; ');
-    // return true if token not exist
-    return !cookies.some(cookie => cookie.startsWith(`${"accessToken"}=`));
+export default async function hasValidToken(): Promise<boolean> {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL + '/health/check';
+    
+        const response = await fetch(
+            apiUrl,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            }
+        )
+    
+        if(!response.ok) {
+            return false;
+        } 
+    
+        return true;
 }

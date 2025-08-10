@@ -7,8 +7,8 @@ import Footer from './components/Footer/Footer'
 import AuthPage from './pages/Auth/Content'
 import SubscriptionPageContent from './pages/SubscriptionPage/Content'
 import CitationPage from './pages/Citation/Content'
-import checkTokenExpired from './utils/cookies/checkToken'
 import CitationTypePage from './pages/Citation/CitationType/Content'
+import hasValidToken from './utils/cookies/checkToken'
 
 function App() {
   const navigate = useNavigate();
@@ -22,11 +22,16 @@ function App() {
   }, [isLogin])
 
   useEffect(() => {
-    const validToken = checkTokenExpired();
-    if(validToken && isLogin) {
-      setLogin(false);
-      navigate('/login')
+    const checkToken = async () => {
+      const validToken = await hasValidToken();
+      console.log(validToken)
+      if(!validToken) {
+        setLogin(false);
+        navigate('/login')
+      }
     }
+
+    checkToken();
   }, []);
   
   return (
