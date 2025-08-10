@@ -9,9 +9,11 @@ import SubscriptionPageContent from './pages/SubscriptionPage/Content'
 import CitationPage from './pages/Citation/Content'
 import CitationTypePage from './pages/Citation/CitationType/Content'
 import hasValidToken from './utils/cookies/checkToken'
+import Notifier, { type NotifierData } from './components/Notifier/Content'
 
 function App() {
   const navigate = useNavigate();
+  const [notifier, setNotifier] = useState<NotifierData | null>(null);
   const [isLogin, setLogin] = useState(() => {
     const savedLoginState = localStorage.getItem('isLogin');
     return savedLoginState ? JSON.parse(savedLoginState) : false;
@@ -28,11 +30,19 @@ function App() {
       if(!validToken) {
         setLogin(false);
         navigate('/login')
+        setNotifier({
+          type: 'warning',
+          message: 'Your session has expired. Please log in again.'
+        });
       }
     }
 
     checkToken();
   }, []);
+
+  const handleCloseNotifier = () => {
+    setNotifier(null);
+  };
   
   return (
     <>
@@ -40,7 +50,7 @@ function App() {
       
         <Routes>
           {/* Full screen routes without navbar/footer */}
-          {isLogin && <Route path='/' element={<CitationPage/>}/>}
+          {isLogin && <Route path='/' element={<CitationPage setNotifier={setNotifier}/>}/>}
           {isLogin && <Route path='/citation-types' element={<CitationTypePage/>}/>}
           
           {/* Routes with navbar/footer */}
@@ -85,6 +95,11 @@ function App() {
             </>
           }/>
         </Routes>
+
+        <Notifier 
+        notifier={notifier} 
+        onClose={handleCloseNotifier} 
+      />
     </>
   )
 }

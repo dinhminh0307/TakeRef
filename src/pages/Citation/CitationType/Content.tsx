@@ -3,12 +3,9 @@ import SideBar from '../../../components/SideBar/Content';
 import AddCitationTypeModal from '../AddCitationType/Content';
 import { getAllCitationType } from './apis/GetCitationTypes';
 import { ResourceNotFoundError } from '../../../utils/exceptions/exception';
+import type { CitationType } from '../../../utils/interfaces/CitationType';
 
-interface CitationType {
-  type_id: number;
-  name: string;
-  description: string;
-}
+
 
 const CitationTypePage: React.FC = () => {
   const [citationTypes, setCitationTypes] = useState<CitationType[]>([
@@ -20,8 +17,6 @@ const CitationTypePage: React.FC = () => {
   const handleSaveCitationType = (newType: {type_id: number, name: string; description: string }) => {
     
     setCitationTypes([...citationTypes, newType]);
-    console.log('New citation type saved:', newType);
-    
     };
 
   const handleSidebarClick = (itemId: string) => {

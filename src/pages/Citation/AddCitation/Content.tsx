@@ -1,38 +1,43 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LoadingSpinner from '../../../components/LoadingSpiner/Content';
-import { sendRmitHarvardWebsiteCitationRequest } from './apis/CitationAPI';
-import FormattedCitation, { formatCitationWithItalics, type CitationResponse } from '../../../utils/format/format';
+import { saveCitationRequest, sendRmitHarvardWebsiteCitationRequest } from './apis/CitationAPI';
+import FormattedCitation, { formatCitationWithItalics, type LLMCitationResponse} from '../../../utils/format/format';
+import type { CitationType } from '../../../utils/interfaces/CitationType';
+import { getAllCitationType } from '../CitationType/apis/GetCitationTypes';
+import type { CitationResponse } from '../../../utils/interfaces/CitationResponse';
 
 interface AddCitationModalProps {
   show: boolean;
   onHide: () => void;
   onSave: (citationRequest: any) => void;
+  setNotifier: any;
 }
 
-interface CitationType {
-  value: string;
-  label: string;
-}
 
-const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSave }) => {
+const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSave, setNotifier }) => {
   const [url, setUrl] = useState('');
   const [title, setTitle] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [citationResult, setCitationResult] = useState('');
   const [italicSentences, setItalicSentences] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [citationTypes, setCitationTypes] = useState<CitationType[]>([]);
+  const [selectedTypeId, setSelectedTypeId] = useState(0);
 
-  const citationTypes: CitationType[] = [
-    { value: 'journal-article', label: 'Journal Article' },
-    { value: 'book', label: 'Book' },
-    { value: 'book-chapter', label: 'Book Chapter' },
-    { value: 'conference-paper', label: 'Conference Paper' },
-    { value: 'thesis', label: 'Thesis' },
-    { value: 'webpage', label: 'Webpage' },
-    { value: 'blog-post', label: 'Blog Post' },
-    { value: 'report', label: 'Report' },
-    { value: 'article', label: 'Article' }
-  ];
+
+  const fetchCitationType = async () => {
+    try {
+        const data = await getAllCitationType();
+        setCitationTypes(data);
+        console.log(citationTypes)
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  useEffect(() => {
+    fetchCitationType()
+  }, [])
 
   const handleCite = async () => {
     if (!url || !selectedType) {
@@ -51,43 +56,65 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
     }
     
     try {
-      const response: CitationResponse = await sendRmitHarvardWebsiteCitationRequest(body);
+      const response: LLMCitationResponse = await sendRmitHarvardWebsiteCitationRequest(body);
       setCitationResult(response.content);
       setItalicSentences(response.italic_sentence || []);
       setTitle(response.title);
     } catch (error) {
-      console.error('Error generating citation:', error);
-      alert('Error generating citation. Please try again.');
+      if(error instanceof Error) {
+        console.error('Error generating citation:', error);
+        setNotifier({
+          type: 'danger',
+          message: error.message
+        })
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSave = () => {
-    if (!citationResult) {
-      alert('Please generate a citation first by clicking the "Cite" button');
-      return;
+  const handleSave = async () => {
+    try {
+      if (!citationResult) {
+        alert('Please generate a citation first by clicking the "Cite" button');
+        return;
+      }
+
+      // Save the formatted citation with italics
+      const formattedCitation = formatCitationWithItalics(citationResult, italicSentences);
+      const body = {
+        citation_id: 0,
+        title: title,
+        content: citationResult,
+        url: url,
+        type: selectedType,
+        typeid: selectedTypeId,
+        created_at: Date.now().toString(),
+        modified_at: null,
+      }
+      const response : CitationResponse = await saveCitationRequest(body);
+      onSave(response);
+
+      // set notifier
+      setNotifier({
+        type: 'success',
+        message: 'Saved successfully'
+      })
+
+      // Reset form
+      setUrl('');
+      setSelectedType('');
+      setCitationResult('');
+      setItalicSentences([]);
+      onHide();
+    } catch(e) {
+      if(e instanceof Error) {
+        setNotifier({
+          type: 'danger',
+          message: e.message
+        })
+      }
     }
-
-    // Save the formatted citation with italics
-    const formattedCitation = formatCitationWithItalics(citationResult, italicSentences);
-
-    onSave({
-      citation_id: 0,
-      url: url,
-      type: selectedType,
-      type_id: 0,
-      created_at: Date.now.toString,
-      modified_at: null,
-      result: formattedCitation
-    });
-
-    // Reset form
-    setUrl('');
-    setSelectedType('');
-    setCitationResult('');
-    setItalicSentences([]);
-    onHide();
   };
 
   const handleClose = () => {
@@ -141,13 +168,21 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
                   className="form-select"
                   id="citationType"
                   value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedType(e.target.value)
+                    const selectedTypeObj = citationTypes.find(
+                      type => {
+                        return type.name === e.target.value
+                      }
+                    )
+                    setSelectedTypeId( selectedTypeObj ? selectedTypeObj.type_id : 0);
+                  }}
                   required
                 >
                   <option value="">Select citation type...</option>
                   {citationTypes.map((type) => (
-                    <option key={type.value} value={type.value}>
-                      {type.label}
+                    <option key={type.type_id} value={type.name}>
+                      {type.name}
                     </option>
                   ))}
                 </select>

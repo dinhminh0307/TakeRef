@@ -1,6 +1,6 @@
 import React from "react";
 
-export interface CitationResponse {
+export interface LLMCitationResponse {
   content: string;
   italic_sentence: string[];
   title: string;
