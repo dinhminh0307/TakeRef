@@ -8,6 +8,7 @@ import AuthPage from './pages/Auth/Content'
 import SubscriptionPageContent from './pages/SubscriptionPage/Content'
 import CitationPage from './pages/Citation/Content'
 import checkTokenExpired from './utils/cookies/checkToken'
+import CitationTypePage from './pages/Citation/CitationType/Content'
 
 function App() {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ function App() {
         <Routes>
           {/* Full screen routes without navbar/footer */}
           {isLogin && <Route path='/' element={<CitationPage/>}/>}
+          {isLogin && <Route path='/citation-types' element={<CitationTypePage/>}/>}
           
           {/* Routes with navbar/footer */}
           {!isLogin && <Route path='/' element={

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import LoadingSpinner from '../../../components/LoadingSpiner/Content';
-import { sendRmitHarvardWebsiteCitationRequest } from '../apis/CitationAPI';
+import { sendRmitHarvardWebsiteCitationRequest } from './apis/CitationAPI';
 import FormattedCitation, { formatCitationWithItalics, type CitationResponse } from '../../../utils/format/format';
 
 interface AddCitationModalProps {

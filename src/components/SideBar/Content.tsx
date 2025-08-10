@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface SidebarItem {
   id: string;
   label: string;
   icon: string;
+  path: string;
   isActive?: boolean;
 }
 
@@ -14,33 +16,56 @@ interface SidebarProps {
 
 const SideBar: React.FC<SidebarProps> = ({ 
   onItemClick, 
-  activeItem = 'citation' 
+  activeItem 
 }) => {
-  const [selectedItem, setSelectedItem] = useState<string>(activeItem);
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Determine active item based on current path if not provided
+  const getCurrentActiveItem = () => {
+    if (activeItem) return activeItem;
+    
+    const currentPath = location.pathname;
+    const item = sidebarItems.find(item => item.path === currentPath);
+    return item?.id || 'citation';
+  };
+
+  const [selectedItem, setSelectedItem] = useState<string>(getCurrentActiveItem());
 
   const sidebarItems: SidebarItem[] = [
     {
       id: 'citation',
       label: 'Citation',
       icon: 'bi-bookmark-fill',
+      path: '/',
       isActive: true
+    },
+    {
+      id: 'citationType',
+      label: 'Citation Types',
+      icon: 'bi-collection',
+      path: '/citation-types'
     },
     {
       id: 'courses',
       label: 'Courses',
-      icon: 'bi-chat-dots'
+      icon: 'bi-chat-dots',
+      path: '/courses'
     },
     {
       id: 'transactions',
       label: 'Transactions',
-      icon: 'bi-arrow-left-right'
+      icon: 'bi-arrow-left-right',
+      path: '/transactions'
     }
   ];
 
-  const handleItemClick = (itemId: string) => {
-    setSelectedItem(itemId);
+  const handleItemClick = (item: SidebarItem) => {
+    setSelectedItem(item.id);
+    navigate(item.path);
+    
     if (onItemClick) {
-      onItemClick(itemId);
+      onItemClick(item.id);
     }
   };
 
@@ -56,7 +81,7 @@ const SideBar: React.FC<SidebarProps> = ({
                     ? 'text-dark fw-semibold'
                     : 'btn-light text-muted'
                 }`}
-                onClick={() => handleItemClick(item.id)}
+                onClick={() => handleItemClick(item)}
                 style={{
                   backgroundColor: selectedItem === item.id ? '#c8d64b' : 'transparent',
                   transition: 'all 0.2s ease',
