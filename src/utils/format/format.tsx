@@ -3,6 +3,7 @@ import React from "react";
 export interface CitationResponse {
   content: string;
   italic_sentence: string[];
+  title: string;
 }
 
 // Utility function to format citation with italics

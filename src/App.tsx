@@ -22,7 +22,7 @@ function App() {
 
   useEffect(() => {
     const validToken = checkTokenExpired();
-    if(!validToken && isLogin) {
+    if(validToken && isLogin) {
       setLogin(false);
       navigate('/login')
     }

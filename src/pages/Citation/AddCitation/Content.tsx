@@ -6,7 +6,7 @@ import FormattedCitation, { formatCitationWithItalics, type CitationResponse } f
 interface AddCitationModalProps {
   show: boolean;
   onHide: () => void;
-  onSave: (citation: { url: string; type: string; result: string }) => void;
+  onSave: (citationRequest: any) => void;
 }
 
 interface CitationType {
@@ -16,6 +16,7 @@ interface CitationType {
 
 const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSave }) => {
   const [url, setUrl] = useState('');
+  const [title, setTitle] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [citationResult, setCitationResult] = useState('');
   const [italicSentences, setItalicSentences] = useState<string[]>([]);
@@ -53,6 +54,7 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
       const response: CitationResponse = await sendRmitHarvardWebsiteCitationRequest(body);
       setCitationResult(response.content);
       setItalicSentences(response.italic_sentence || []);
+      setTitle(response.title);
     } catch (error) {
       console.error('Error generating citation:', error);
       alert('Error generating citation. Please try again.');
@@ -71,8 +73,12 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
     const formattedCitation = formatCitationWithItalics(citationResult, italicSentences);
 
     onSave({
-      url,
+      citation_id: 0,
+      url: url,
       type: selectedType,
+      type_id: 0,
+      created_at: Date.now.toString,
+      modified_at: null,
       result: formattedCitation
     });
 
@@ -99,7 +105,7 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
       <div className="modal-dialog modal-lg">
         <div className="modal-content">
           <div className="modal-header border-0 pb-0">
-            <h5 className="modal-title fw-bold">Add New Citation</h5>
+            <h5 className="modal-title fw-bold">Add New Citation: <span className="fw-normal">{title}</span></h5>
             <button 
               type="button" 
               className="btn-close" 
