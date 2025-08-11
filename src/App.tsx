@@ -14,6 +14,7 @@ import Notifier, { type NotifierData } from './components/Notifier/Content'
 function App() {
   const navigate = useNavigate();
   const [notifier, setNotifier] = useState<NotifierData | null>(null);
+  const [shouldNavigateToLogin, setShouldNavigateToLogin] = useState(false);
   const [isLogin, setLogin] = useState(() => {
     const savedLoginState = localStorage.getItem('isLogin');
     return savedLoginState ? JSON.parse(savedLoginState) : false;
@@ -29,16 +30,22 @@ function App() {
       console.log(validToken)
       if(!validToken) {
         setLogin(false);
-        navigate('/login')
-        setNotifier({
-          type: 'warning',
-          message: 'Your session has expired. Please log in again.'
-        });
+        setShouldNavigateToLogin(true);
       }
     }
 
     checkToken();
   }, []);
+
+  useEffect(() => {
+    if(shouldNavigateToLogin && !isLogin) {
+      navigate('/login')
+      setNotifier({
+        type: 'warning',
+        message: 'Your session has expired. Please log in again.'
+      });
+    }
+  }, [isLogin])
 
   const handleCloseNotifier = () => {
     setNotifier(null);

@@ -65,7 +65,7 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
         console.error('Error generating citation:', error);
         setNotifier({
           type: 'danger',
-          message: error.message
+          message: error instanceof Error ? error.message : 'An error occurred'
         })
       }
     } finally {
