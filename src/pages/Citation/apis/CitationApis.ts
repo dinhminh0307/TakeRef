@@ -10,6 +10,7 @@ export async function getAllCitation(): Promise<CitationResponse[]> {
             method: 'GET',
             headers: {
                 'Content-Type':'application/json',
+                'X-Frontend-Path': window.location.pathname
             },
             credentials: 'include'
         }

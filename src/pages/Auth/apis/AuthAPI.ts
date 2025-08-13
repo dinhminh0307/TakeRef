@@ -7,6 +7,7 @@ export async function  sendLoginRequest(body: any): Promise<any> {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-Frontend-Path': '/auth'
             },
             credentials: 'include',
             body: JSON.stringify(body)
@@ -27,7 +28,8 @@ export async function sendRegisterRequest(body: any): Promise<any> {
         {
             method: 'POST',
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                'X-Frontend-Path': '/auth'
             },
             body: JSON.stringify(body)
         }
@@ -48,7 +50,8 @@ export async function sendLogoutRequest(): Promise<any> {
         {
             method: 'POST',
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                'X-Frontend-Path': '/auth'
             },
             credentials: 'include'
         }

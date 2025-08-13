@@ -5,6 +5,8 @@ import FormattedCitation, { formatCitationWithItalics, type LLMCitationResponse}
 import type { CitationType } from '../../../utils/interfaces/CitationType';
 import { getAllCitationType } from '../CitationType/apis/GetCitationTypes';
 import type { CitationResponse } from '../../../utils/interfaces/CitationResponse';
+import { AuthorizationError } from '../../../utils/exceptions/exception';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 interface AddCitationModalProps {
   show: boolean;
@@ -23,6 +25,7 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
   const [isLoading, setIsLoading] = useState(false);
   const [citationTypes, setCitationTypes] = useState<CitationType[]>([]);
   const [selectedTypeId, setSelectedTypeId] = useState(0);
+  const navigate = useNavigate();
 
 
   const fetchCitationType = async () => {
@@ -31,6 +34,13 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
         setCitationTypes(data);
         console.log(citationTypes)
     } catch(e) {
+      if(e instanceof AuthorizationError) {
+        setNotifier({
+          type: "danger",
+          message: e.message
+        })
+        navigate('/auth-error')
+      }
       console.error(e);
     }
   }

@@ -10,6 +10,7 @@ import CitationPage from './pages/Citation/Content'
 import CitationTypePage from './pages/Citation/CitationType/Content'
 import hasValidToken from './utils/cookies/checkToken'
 import Notifier, { type NotifierData } from './components/Notifier/Content'
+import AuthErrorPage from './pages/AuthErrorPage/Content'
 
 function App() {
   const navigate = useNavigate();
@@ -97,6 +98,15 @@ function App() {
             <>
               <main>
                 <SubscriptionPageContent/>
+              </main>
+              <Footer />
+            </>
+          }/>
+
+          <Route path='/auth-error' element={
+            <>
+              <main>
+                <AuthErrorPage/>
               </main>
               <Footer />
             </>

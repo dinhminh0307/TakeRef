@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import SideBar from '../../../components/SideBar/Content';
 import AddCitationTypeModal from '../AddCitationType/Content';
 import { getAllCitationType } from './apis/GetCitationTypes';
-import { ResourceNotFoundError } from '../../../utils/exceptions/exception';
+import { AuthorizationError, ResourceNotFoundError } from '../../../utils/exceptions/exception';
 import type { CitationType } from '../../../utils/interfaces/CitationType';
 import LoadingSpinner from '../../../components/LoadingSpiner/Content';
+import { useNavigate } from 'react-router-dom';
 
 interface CitationTypeProps {
   setNotifier?: any
@@ -18,6 +19,8 @@ const CitationTypePage: React.FC<CitationTypeProps> = ({setNotifier}) => {
   const [loading, setLoading] = useState(false);
 
   const [showAddModal, setShowAddModal] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSaveCitationType = (newType: {type_id: number, name: string; description: string }) => {
     
@@ -37,8 +40,12 @@ const CitationTypePage: React.FC<CitationTypeProps> = ({setNotifier}) => {
     } catch(e) {
         if(e instanceof ResourceNotFoundError) {
             console.error(e);
-        } else {
-            console.error(e);
+        } else if(e instanceof AuthorizationError) {
+            setNotifier({
+              type: "danger",
+              message: e.message
+            })
+            navigate('/auth-error')
         }
     } finally {
       setLoading(false);
