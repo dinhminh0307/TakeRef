@@ -89,7 +89,7 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
         url: url,
         type: selectedType,
         typeid: selectedTypeId,
-        created_at: Date.now().toString(),
+        created_at: new Date().toISOString(),
         modified_at: null,
       }
       const response : CitationResponse = await saveCitationRequest(body);

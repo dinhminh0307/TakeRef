@@ -63,7 +63,7 @@ const CitationPage: React.FC<{setNotifier: any}> = ({setNotifier}) => {
   return (
     <div className="d-flex" style={{ minHeight: '100vh' }}>
       {/* Sidebar */}
-      <SideBar activeItem="citation" onItemClick={handleSidebarClick} />
+      <SideBar activeItem="citation" onItemClick={handleSidebarClick} setNotifier={setNotifier} setLoading={setLoading}/>
       
       {/* Main Content */}
       {loading ? (

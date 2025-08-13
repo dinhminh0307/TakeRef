@@ -15,6 +15,7 @@ function App() {
   const navigate = useNavigate();
   const [notifier, setNotifier] = useState<NotifierData | null>(null);
   const [shouldNavigateToLogin, setShouldNavigateToLogin] = useState(false);
+  const [logout, setLogout] = useState(false);
   const [isLogin, setLogin] = useState(() => {
     const savedLoginState = localStorage.getItem('isLogin');
     return savedLoginState ? JSON.parse(savedLoginState) : false;
@@ -54,11 +55,10 @@ function App() {
   return (
     <>
     <NavBar />
-      
         <Routes>
           {/* Full screen routes without navbar/footer */}
           {isLogin && <Route path='/' element={<CitationPage setNotifier={setNotifier}/>}/>}
-          {isLogin && <Route path='/citation-types' element={<CitationTypePage/>}/>}
+          {isLogin && <Route path='/citation-types' element={<CitationTypePage setNotifier={setNotifier}/>}/>}
           
           {/* Routes with navbar/footer */}
           {!isLogin && <Route path='/' element={

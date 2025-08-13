@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { sendLogoutRequest } from '../../pages/Auth/apis/AuthAPI';
 
 interface SidebarItem {
   id: string;
@@ -12,11 +13,17 @@ interface SidebarItem {
 interface SidebarProps {
   onItemClick?: (itemId: string) => void;
   activeItem?: string;
+  onLogout?: () => void;
+  setNotifier?: any,
+  setLoading?:any
 }
 
 const SideBar: React.FC<SidebarProps> = ({ 
   onItemClick, 
-  activeItem 
+  activeItem,
+  onLogout,
+  setNotifier,
+  setLoading
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -69,9 +76,38 @@ const SideBar: React.FC<SidebarProps> = ({
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      setLoading(true);
+      if (onLogout) {
+        onLogout();
+      }
+      const response = await sendLogoutRequest();
+      // Clear any stored auth data
+      localStorage.removeItem('isLogin');
+      setNotifier(
+        {
+          type: 'success',
+          message: 'Logout successfully'
+        }
+      )
+      setLoading(false);
+      navigate('/login');
+    } catch(e) {
+      setNotifier(
+        {
+          type: 'danger',
+          message: 'Logout not successfully'
+        }
+      )
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="d-flex flex-column bg-light border-end" style={{ width: '200px', minHeight: '100vh' }}>
-      <div className="p-2">
+      {/* Main navigation items */}
+      <div className="p-2 flex-grow-1">
         <ul className="list-unstyled mb-0">
           {sidebarItems.map((item) => (
             <li key={item.id} className="mb-1">
@@ -94,6 +130,29 @@ const SideBar: React.FC<SidebarProps> = ({
             </li>
           ))}
         </ul>
+      </div>
+
+      {/* Logout button at the bottom */}
+      <div className="p-2 border-top">
+        <button
+          className="btn w-100 text-start d-flex align-items-center py-2 px-3 border-0 rounded btn-light text-muted"
+          onClick={handleLogout}
+          style={{
+            transition: 'all 0.2s ease',
+            fontSize: '0.9rem'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#dc3545';
+            e.currentTarget.style.color = 'white';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = '#6c757d';
+          }}
+        >
+          <i className="bi-box-arrow-right me-2" style={{ fontSize: '14px' }}></i>
+          <span>Logout</span>
+        </button>
       </div>
     </div>
   );
