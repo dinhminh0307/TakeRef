@@ -14,6 +14,7 @@ const CitationPage: React.FC<{setNotifier: any}> = ({setNotifier}) => {
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [admin, setAdmin] = useState(false);
 
   const handleSidebarClick = (itemId: string) => {
     console.log(`Navigating to: ${itemId}`);
@@ -36,20 +37,27 @@ const CitationPage: React.FC<{setNotifier: any}> = ({setNotifier}) => {
   const fetchCitationData = async () => {
     try {
       setLoading(true)
-      const data = await getAllCitation();
-      setCitations(data);
-    } catch(e) {
-      if(e instanceof ResourceNotFoundError) {
-        setNotifier({
-          type: 'warning',
-          message: e.message
-        })
+      const result = await getAllCitation();
+      const roleId = result.headers.get('X-Role-Headers');
+      if(roleId === '1') {
+        setAdmin(true)
+      } else {
+        setAdmin(false)
+      }
+
+      if(result.ok && result.data) {
+        setCitations(result.data);
       } else {
         setNotifier({
           type: 'warning',
-          message: e
+          message: result.error
         })
       }
+    } catch(e) {
+      setNotifier({
+          type: 'warning',
+          message: e
+        })
     } finally {
       setLoading(false)
     }
@@ -63,7 +71,7 @@ const CitationPage: React.FC<{setNotifier: any}> = ({setNotifier}) => {
   return (
     <div className="d-flex" style={{ minHeight: '100vh' }}>
       {/* Sidebar */}
-      <SideBar activeItem="citation" onItemClick={handleSidebarClick} setNotifier={setNotifier} setLoading={setLoading}/>
+      <SideBar activeItem="citation" admin={admin} onItemClick={handleSidebarClick} setNotifier={setNotifier} setLoading={setLoading}/>
       
       {/* Main Content */}
       {loading ? (

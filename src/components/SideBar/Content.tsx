@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { sendLogoutRequest } from '../../pages/Auth/apis/AuthAPI';
 
@@ -15,7 +15,8 @@ interface SidebarProps {
   activeItem?: string;
   onLogout?: () => void;
   setNotifier?: any,
-  setLoading?:any
+  setLoading?:any,
+  admin?: boolean
 }
 
 const SideBar: React.FC<SidebarProps> = ({ 
@@ -23,7 +24,8 @@ const SideBar: React.FC<SidebarProps> = ({
   activeItem,
   onLogout,
   setNotifier,
-  setLoading
+  setLoading,
+  admin
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -67,6 +69,21 @@ const SideBar: React.FC<SidebarProps> = ({
     }
   ];
 
+  // Filter sidebar items based on admin status
+  const filteredSidebarItems = sidebarItems.filter(item => {
+  // Always show citation for all users
+  if (item.id === 'citation') {
+    return true;
+  }
+  
+  // Hide courses, citationType, and transactions when admin is false
+  if (item.id === 'courses' || item.id === 'citationType' || item.id === 'transactions') {
+    return admin === true;
+  }
+
+  return true;
+});
+
   const handleItemClick = (item: SidebarItem) => {
     setSelectedItem(item.id);
     navigate(item.path);
@@ -109,7 +126,7 @@ const SideBar: React.FC<SidebarProps> = ({
       {/* Main navigation items */}
       <div className="p-2 flex-grow-1">
         <ul className="list-unstyled mb-0">
-          {sidebarItems.map((item) => (
+          {filteredSidebarItems.map((item) => (
             <li key={item.id} className="mb-1">
               <button
                 className={`btn w-100 text-start d-flex align-items-center py-2 px-3 border-0 rounded ${
