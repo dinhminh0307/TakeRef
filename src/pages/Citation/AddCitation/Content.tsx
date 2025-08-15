@@ -30,17 +30,19 @@ const AddCitationModal: React.FC<AddCitationModalProps> = ({ show, onHide, onSav
 
   const fetchCitationType = async () => {
     try {
-        const data = await getAllCitationType();
-        setCitationTypes(data);
-        console.log(citationTypes)
-    } catch(e) {
-      if(e instanceof AuthorizationError) {
-        setNotifier({
+        const result = await getAllCitationType();
+        if(result.ok && result.data) {
+          setCitationTypes(result.data);
+          console.log(citationTypes)
+        } else if(result.status === 403) {
+          setNotifier({
           type: "danger",
-          message: e.message
+          message: result.error
         })
         navigate('/auth-error')
-      }
+        }
+        
+    } catch(e) {
       console.error(e);
     }
   }
