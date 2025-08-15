@@ -20,6 +20,8 @@ const CitationTypePage: React.FC<CitationTypeProps> = ({setNotifier}) => {
 
   const [showAddModal, setShowAddModal] = useState(false);
 
+  const [admin, setAdmin] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSaveCitationType = (newType: {type_id: number, name: string; description: string }) => {
@@ -35,18 +37,37 @@ const CitationTypePage: React.FC<CitationTypeProps> = ({setNotifier}) => {
   const getCitationType = async () => {
     setLoading(true)
     try {
-        const data = await getAllCitationType();
-        setCitationTypes(data);
-    } catch(e) {
-        if(e instanceof ResourceNotFoundError) {
-            console.error(e);
-        } else if(e instanceof AuthorizationError) {
-            setNotifier({
-              type: "danger",
-              message: e.message
-            })
-            navigate('/auth-error')
+        const result = await getAllCitationType();
+        const roleId = result.headers.get('X-Role-Headers');
+        console.log(roleId)
+        if(roleId === '1') {
+          setAdmin(true)
+        } else {
+          setAdmin(false)
         }
+
+        if(result.ok && result.data) {
+          setCitationTypes(result.data);
+        } else if(result.status === 404) {
+          setNotifier({
+              type: "warning",
+              message: result.error
+            })
+        } else if(result.status === 403){
+          setNotifier({
+              type: "warning",
+              message: result.error
+            })
+          navigate('/auth-error')
+        } else {
+          setNotifier({
+              type: "danger",
+              message: result.error
+            })
+        }
+        
+    } catch(e) {
+        console.log(e);
     } finally {
       setLoading(false);
     }
@@ -68,7 +89,7 @@ const CitationTypePage: React.FC<CitationTypeProps> = ({setNotifier}) => {
   return (
     <div className="d-flex" style={{ minHeight: '100vh' }}>
       {/* Sidebar */}
-      <SideBar activeItem="citation" onItemClick={handleSidebarClick} setNotifier={setNotifier} setLoading={setLoading}/>
+      <SideBar admin={admin} activeItem="citation" onItemClick={handleSidebarClick} setNotifier={setNotifier} setLoading={setLoading}/>
       
       {loading ? (
         <div className="flex-grow-1 d-flex justify-content-center align-items-center">
