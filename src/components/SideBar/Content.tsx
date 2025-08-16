@@ -62,6 +62,12 @@ const SideBar: React.FC<SidebarProps> = ({
       path: '/courses'
     },
     {
+      id: 'subscriptionType',
+      label: 'Subscription Types',
+      icon: 'bi-credit-card',
+      path: '/subscription/type'
+    },
+    {
       id: 'transactions',
       label: 'Transactions',
       icon: 'bi-arrow-left-right',
@@ -77,7 +83,9 @@ const SideBar: React.FC<SidebarProps> = ({
   }
   
   // Hide courses, citationType, and transactions when admin is false
-  if (item.id === 'courses' || item.id === 'citationType' || item.id === 'transactions') {
+  if (item.id === 'courses' || item.id === 'citationType' || item.id === 'transactions'
+      || item.id === 'subscriptionType'
+  ) {
     return admin === true;
   }
 
