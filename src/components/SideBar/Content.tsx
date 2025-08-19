@@ -47,33 +47,44 @@ const SideBar: React.FC<SidebarProps> = ({
       label: 'Citation',
       icon: 'bi-bookmark-fill',
       path: '/',
-      isActive: true
     },
     {
       id: 'citationType',
       label: 'Citation Types',
       icon: 'bi-collection',
-      path: '/citation-types'
+      path: '/citation-types',
     },
     {
       id: 'courses',
       label: 'Courses',
       icon: 'bi-chat-dots',
-      path: '/courses'
+      path: '/courses',
     },
     {
       id: 'subscriptionType',
       label: 'Subscription Types',
       icon: 'bi-credit-card',
-      path: '/subscription/type'
+      path: '/subscription/type',
+    },
+    {
+      id: 'authorization',
+      label: 'Authorization',
+      icon: 'bi-shield-check',
+      path: '/authorization',
     },
     {
       id: 'transactions',
       label: 'Transactions',
       icon: 'bi-arrow-left-right',
-      path: '/transactions'
+      path: '/transactions',
     }
   ];
+
+   useEffect(() => {
+    const currentActiveItem = getCurrentActiveItem();
+    setSelectedItem(currentActiveItem);
+    console.log(selectedItem)
+  }, [location.pathname, activeItem]);
 
   // Filter sidebar items based on admin status
   const filteredSidebarItems = sidebarItems.filter(item => {

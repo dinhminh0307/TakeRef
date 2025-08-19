@@ -12,6 +12,7 @@ import hasValidToken from './utils/cookies/checkToken'
 import Notifier, { type NotifierData } from './components/Notifier/Content'
 import AuthErrorPage from './pages/AuthErrorPage/Content'
 import SubscriptionTypePage from './pages/SubscriptionPage/SubscriptionType/Content'
+import AuthorizationPage from './pages/Authorization/Content'
 
 function App() {
   const navigate = useNavigate();
@@ -62,6 +63,7 @@ function App() {
           {isLogin && <Route path='/' element={<CitationPage setNotifier={setNotifier}/>}/>}
           {isLogin && <Route path='/citation-types' element={<CitationTypePage setNotifier={setNotifier}/>}/>}
           {isLogin && <Route path='/subscription/type' element={<SubscriptionTypePage setNotifier={setNotifier}/>}/>}
+          {isLogin && <Route path='/authorization' element={<AuthorizationPage setNotifier={setNotifier}/>}/>}
           
           {/* Routes with navbar/footer */}
           {!isLogin && <Route path='/' element={

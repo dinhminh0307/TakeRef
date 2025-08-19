@@ -89,7 +89,7 @@ const CitationTypePage: React.FC<CitationTypeProps> = ({setNotifier}) => {
   return (
     <div className="d-flex" style={{ minHeight: '100vh' }}>
       {/* Sidebar */}
-      <SideBar admin={admin} activeItem="citation" onItemClick={handleSidebarClick} setNotifier={setNotifier} setLoading={setLoading}/>
+      <SideBar admin={admin} activeItem="citationType" onItemClick={handleSidebarClick} setNotifier={setNotifier} setLoading={setLoading}/>
       
       {loading ? (
         <div className="flex-grow-1 d-flex justify-content-center align-items-center">
