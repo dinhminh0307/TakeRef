@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import SideBar from '../../components/SideBar/Content';
 import LoadingSpinner from '../../components/LoadingSpiner/Content';
 import { useNavigate } from 'react-router-dom';
+import { fetchAllFunctionRole } from './apis/FunctionRoleApi';
 
 interface AuthorizationPageProps {
   setNotifier?: any
@@ -44,6 +45,48 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
   const handleFunctionRoleAction = (action: string, function_role_id: number) => {
 
   }
+
+  const fetchAllFunction = async () => {
+    try {
+        const response = await fetchAllFunctionRole();
+        const roleId = response.headers.get('X-Role-Headers');
+        if(roleId === '1') {
+          setAdmin(true)
+        } else {
+          setAdmin(false)
+        }
+
+        // handle error
+        if(response.data && response.ok) {
+            setPermissions(response.data);
+        }else if(response.status === 404) {
+          setNotifier({
+              type: "warning",
+              message: response.error
+            })
+        } else if(response.status === 403){
+          setNotifier({
+              type: "warning",
+              message: response.error
+            })
+          navigate('/auth-error')
+        } else {
+          setNotifier({
+              type: "danger",
+              message: response.error
+            })
+        }
+    } catch(e) {
+        setNotifier({
+              type: "danger",
+              message: e
+        })
+    }
+  }
+
+  useEffect(() => {
+    fetchAllFunction()
+  }, [])
 
   return (
     <div className="d-flex" style={{ minHeight: '100vh' }}>
