@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchAllFunctionRole } from './apis/FunctionRoleApi';
 import FunctionTableComponent from '../../components/AuthTable/FunctionTableComponent';
 import FunctionRoleTableComponent from '../../components/AuthTable/FunctionRoleTableComponent';
+import FunctionModal from './FunctionModal/Content';
 
 interface AuthorizationPageProps {
   setNotifier?: any
@@ -16,6 +17,7 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
   const [functionRole, setFunctionRole] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [admin, setAdmin] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -37,11 +39,16 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
   };
 
   const handleNewFunction = () => {
+    setShowModal(true)
     console.log('Opening new permission modal');
   };
 
   const handleNewFunctionRole = () => {
 
+  }
+
+  const handleSaveFunction = (newFunction: any) => {
+    setPermissions([... permissions, newFunction])
   }
 
   const handleFunctionRoleAction = (action: string, function_role_id: number) => {
@@ -232,6 +239,7 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
           <FunctionRoleTableComponent handleFunctionRoleAction={handleFunctionRoleAction} handleNewFunctionRole={handleNewFunctionRole} functionRole={functionRole}/>
         </div>
       )}
+      <FunctionModal show={showModal} onSave={handleSaveFunction} onHide={() => setShowModal(false)}/>
     </div>
   );
 };
