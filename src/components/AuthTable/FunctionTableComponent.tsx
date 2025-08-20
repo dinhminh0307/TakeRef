@@ -1,4 +1,5 @@
 import type React from "react";
+import { useState } from "react";
 
 interface FunctionTableProp {
     functionData: any[];
@@ -6,7 +7,14 @@ interface FunctionTableProp {
     handlePermissionAction?: any;
 }
 const FunctionTableComponent: React.FC<FunctionTableProp> = ({functionData, handleNewFunction, handlePermissionAction}) => {
-    
+    const [currentPage, setCurrentPage] = useState(1);
+    const rowPerPage = 5;
+
+    const indexOfLastRow = currentPage * rowPerPage;
+    const indexOfFirstRow = indexOfLastRow - rowPerPage;
+    const currentRows = functionData.slice(indexOfFirstRow, indexOfLastRow);
+    const totalPages = Math.ceil(functionData.length / rowPerPage);
+
     return(
         <>
             <div className="mb-4">
@@ -35,8 +43,8 @@ const FunctionTableComponent: React.FC<FunctionTableProp> = ({functionData, hand
                   </thead>
                   <tbody>
                     {
-                      functionData.map((func, index) => (
-                      <tr key={func.function_id} className={index < functionData.length - 1 ? 'border-bottom' : ''}>
+                      currentRows.map((func, index) => (
+                      <tr key={func.function_id} className={index < currentRows.length - 1 ? 'border-bottom' : ''}>
                         <td className="px-4 py-3 border-0">
                           <span className="fw-medium">#{func.function_id}</span>
                         </td>
@@ -119,6 +127,44 @@ const FunctionTableComponent: React.FC<FunctionTableProp> = ({functionData, hand
                 </div>
               )}
             </div>
+           <nav aria-label="Page navigation">
+              <ul className="pagination">
+                {/* Previous button */}
+                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                  <button 
+                    className="page-link" 
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  >
+                    Previous
+                  </button>
+                </li>
+
+                {/* Page numbers */}
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <li 
+                    key={i} 
+                    className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}
+                  >
+                    <button 
+                      className="page-link" 
+                      onClick={() => setCurrentPage(i + 1)}
+                    >
+                      {i + 1}
+                    </button>
+                  </li>
+                ))}
+
+                {/* Next button */}
+                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                  <button 
+                    className="page-link" 
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  >
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </nav>
           </div>
         </>
     )
