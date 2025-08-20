@@ -35,3 +35,37 @@ export async function fetchAllFunctionRole(): Promise<ApiResponse> {
     result.data = data;
     return result;
 }
+
+export async function addFunction(body: any): Promise<ApiResponse> {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL + '/function/add';
+
+    const response = await fetch(
+        apiUrl,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(body)
+        }
+    );
+
+    const result : ApiResponse = {
+        headers: response.headers,
+        ok: response.ok,
+        status: response.status
+    }
+
+     if(response.status === 500){
+        result.error = 'Internal error';
+        return result
+    } else if(response.status === 403) {
+        result.error = 'User not authorized';
+        return result
+    }
+
+    const data = await response.json();
+    result.data = data;
+    return result;
+}

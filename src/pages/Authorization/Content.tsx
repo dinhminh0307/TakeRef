@@ -239,7 +239,7 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
           <FunctionRoleTableComponent handleFunctionRoleAction={handleFunctionRoleAction} handleNewFunctionRole={handleNewFunctionRole} functionRole={functionRole}/>
         </div>
       )}
-      <FunctionModal show={showModal} onSave={handleSaveFunction} onHide={() => setShowModal(false)}/>
+      <FunctionModal setNotifier={setNotifier} show={showModal} onSave={handleSaveFunction} onHide={() => setShowModal(false)}/>
     </div>
   );
 };
