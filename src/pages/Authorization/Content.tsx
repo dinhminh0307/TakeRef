@@ -43,9 +43,14 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
   };
 
   const handlePermissionAction = (action: string, permission:any) => {
-    setShowDialog(true);
-    setDialogMessage(`Do you want to ${action} the Function ${permission.function_id}`);
-    setDialogTitle(`${action} function ${permission.function_id}`);
+    console.log(action)
+    if(action === 'delete') {
+      setShowDialog(true);
+      setDialogMessage(`Do you want to ${action} the Function ${permission.function_id}`);
+      setDialogTitle(`${action} function ${permission.function_id}`);
+    } else if(action === 'edit') {
+      setShowModal(true);
+    }
     setDialogAction(action);
     setCurrentTable({functionTable: true, functionRoleTable : false})
     setObjectAction(permission)
@@ -57,7 +62,6 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
 
   const handleNewFunction = () => {
     setShowModal(true)
-    console.log('Opening new permission modal');
   };
 
   const handleNewFunctionRole = () => {
@@ -65,7 +69,13 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
   }
 
   const handleSaveFunction = (newFunction: any) => {
-    setPermissions([... permissions, newFunction])
+    setPermissions((prev) => {
+        if(dialogAction === 'edit') {
+          return prev.filter((f) => f.function_id != objectAction.function_id).concat(newFunction);
+        } else {
+          return [...prev, newFunction];
+        }
+    })
   }
 
   const handleFunctionRoleAction = (action: string, function_role_id: number) => {
@@ -99,7 +109,6 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
     if(confirm) {
         try {
             if(currentTable.functionTable && !currentTable.functionRoleTable) {
-              console.log("Delete function table");
               await handleFunctionTableDelete();
             }
         } catch(e) {
@@ -295,7 +304,7 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
           <FunctionRoleTableComponent handleFunctionRoleAction={handleFunctionRoleAction} handleNewFunctionRole={handleNewFunctionRole} functionRole={functionRole}/>
         </div>
       )}
-      <FunctionModal setNotifier={setNotifier} show={showModal} onSave={handleSaveFunction} onHide={() => setShowModal(false)}/>
+      <FunctionModal data={objectAction} action={dialogAction} setNotifier={setNotifier} show={showModal} onSave={handleSaveFunction} onHide={() => setShowModal(false)}/>
       <ConfirmDialogComponent dialogMessage={dialogMessage} dialogTitle={dialogTitle} show={showDialog} action={handleConfirmDialog}/>
     </div>
   );

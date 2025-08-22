@@ -1,6 +1,6 @@
 import type React from "react";
-import { useState } from "react";
-import { addFunction } from "../apis/FunctionRoleApi";
+import { useEffect, useState } from "react";
+import { addFunction, updateFunction } from "../apis/FunctionRoleApi";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpiner/Content";
 
@@ -9,9 +9,11 @@ interface FunctionModalProp {
     onHide: () => void;
     onSave: (functionRequest: any) => void;
     setNotifier?: any;
+    action?: string;
+    data?: any;
 }
 
-export default function FunctionModal({show, onHide, onSave, setNotifier}: FunctionModalProp) {
+export default function FunctionModal({show, onHide, onSave, setNotifier, action, data}: FunctionModalProp) {
     const [endPoint, setEndPoint] = useState('');
     const [frontendUrl, setFrontendUrl] = useState('')
     const [loading, setLoading] = useState(false);
@@ -28,13 +30,18 @@ export default function FunctionModal({show, onHide, onSave, setNotifier}: Funct
         }
         setLoading(true);
         const body = {
-          function_id: 0,
+          function_id: data ? data.function_id : 0,
           frontendUrl: frontendUrl.trim() ?? null,
           apiEndpoint: endPoint.trim() ?? null,
           sideBarItems: null
         }
 
-        const response = await addFunction(body);
+        let response:any;
+        if(action === 'edit') {
+          response = await updateFunction(body);
+        } else {
+          response = await addFunction(body);
+        }
         if(response.data && response.ok) {
           onSave(response.data);
           handleClose();
@@ -65,6 +72,13 @@ export default function FunctionModal({show, onHide, onSave, setNotifier}: Funct
         setFrontendUrl('');
         onHide();
     }
+
+    useEffect(() => {
+      if(data) {
+        setEndPoint(data.apiEndpoint || '');
+        setFrontendUrl(data.frontendUrl || '');
+      }
+    }, [data])
 
     if(!show) {
         return;
