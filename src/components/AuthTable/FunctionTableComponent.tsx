@@ -1,5 +1,5 @@
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface FunctionTableProp {
     functionData: any[];
@@ -14,6 +14,8 @@ const FunctionTableComponent: React.FC<FunctionTableProp> = ({functionData, hand
     const indexOfFirstRow = indexOfLastRow - rowPerPage;
     const currentRows = functionData.slice(indexOfFirstRow, indexOfLastRow);
     const totalPages = Math.ceil(functionData.length / rowPerPage);
+
+    
 
     return(
         <>
@@ -79,7 +81,7 @@ const FunctionTableComponent: React.FC<FunctionTableProp> = ({functionData, hand
                           <div className="d-flex gap-1">
                             <button
                               className="btn btn-sm p-1"
-                              onClick={() => handlePermissionAction('edit', func.function_id)}
+                              onClick={() => handlePermissionAction('edit', func)}
                               title="Edit"
                               style={{ width: '24px', height: '24px', border: 'none', backgroundColor: 'transparent' }}
                             >
@@ -87,7 +89,7 @@ const FunctionTableComponent: React.FC<FunctionTableProp> = ({functionData, hand
                             </button>
                             <button
                               className="btn btn-sm p-1"
-                              onClick={() => handlePermissionAction('view', func.function_id)}
+                              onClick={() => handlePermissionAction('view', func)}
                               title="View Details"
                               style={{ width: '24px', height: '24px', border: 'none', backgroundColor: 'transparent' }}
                             >
@@ -95,7 +97,7 @@ const FunctionTableComponent: React.FC<FunctionTableProp> = ({functionData, hand
                             </button>
                             <button
                               className="btn btn-sm p-1"
-                              onClick={() => handlePermissionAction('delete', func.function_id)}
+                              onClick={() => handlePermissionAction('delete', func)}
                               title="Delete"
                               style={{ width: '24px', height: '24px', border: 'none', backgroundColor: 'transparent' }}
                             >

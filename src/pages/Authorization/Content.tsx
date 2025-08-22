@@ -2,13 +2,19 @@ import React, { useEffect, useState } from 'react';
 import SideBar from '../../components/SideBar/Content';
 import LoadingSpinner from '../../components/LoadingSpiner/Content';
 import { useNavigate } from 'react-router-dom';
-import { fetchAllFunctionRole } from './apis/FunctionRoleApi';
+import { deleteFunction, fetchAllFunctionRole } from './apis/FunctionRoleApi';
 import FunctionTableComponent from '../../components/AuthTable/FunctionTableComponent';
 import FunctionRoleTableComponent from '../../components/AuthTable/FunctionRoleTableComponent';
 import FunctionModal from './FunctionModal/Content';
+import ConfirmDialogComponent from '../../components/ConfirmDialog/Content';
 
 interface AuthorizationPageProps {
   setNotifier?: any
+}
+
+type CurrentTableAction = {
+    functionTable: boolean;
+    functionRoleTable: boolean;
 }
 
 const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
@@ -18,6 +24,12 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
   const [loading, setLoading] = useState(false);
   const [admin, setAdmin] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState('');
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogAction, setDialogAction] = useState('');
+  const [currentTable, setCurrentTable] = useState<CurrentTableAction>({functionTable: false, functionRoleTable:false});
+  const [objectAction, setObjectAction] = useState<any>();
 
   const navigate = useNavigate();
 
@@ -30,8 +42,13 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
     console.log(`${action} user ${userId}`);
   };
 
-  const handlePermissionAction = (action: string, permissionId: number) => {
-    console.log(`${action} permission ${permissionId}`);
+  const handlePermissionAction = (action: string, permission:any) => {
+    setShowDialog(true);
+    setDialogMessage(`Do you want to ${action} the Function ${permission.function_id}`);
+    setDialogTitle(`${action} function ${permission.function_id}`);
+    setDialogAction(action);
+    setCurrentTable({functionTable: true, functionRoleTable : false})
+    setObjectAction(permission)
   };
 
   const handleNewUser = () => {
@@ -53,6 +70,46 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
 
   const handleFunctionRoleAction = (action: string, function_role_id: number) => {
 
+  }
+
+  const handleFunctionTableDelete = async() => {
+    try {
+      const response = await deleteFunction(objectAction);
+      if(response.data && response.ok) {
+        // remove the object out of the function list
+        setPermissions((prev) => prev.filter((f) => f.function_id != objectAction.function_id));
+      }  else if(response.status === 403){
+          setNotifier({
+              type: "warning",
+              message: response.error
+            })
+          navigate('/auth-error')
+        } else {
+          setNotifier({
+              type: "danger",
+              message: response.error
+            })
+        }
+    } catch(e) {
+      throw e;
+    }
+  }
+
+  const handleConfirmDialog = async (confirm: boolean) => {
+    if(confirm) {
+        try {
+            if(currentTable.functionTable && !currentTable.functionRoleTable) {
+              console.log("Delete function table");
+              await handleFunctionTableDelete();
+            }
+        } catch(e) {
+          
+        }
+        setShowDialog(false)
+    } else {
+      console.log('failed')
+      setShowDialog(false)
+    }
   }
 
   const fetchAllFunction = async () => {
@@ -208,7 +265,6 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
                         </div>
                       </td>
                     </tr>
-                    {/* Add more sample rows if needed */}
                   </tbody>
                 </table>
               </div>
@@ -240,6 +296,7 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
         </div>
       )}
       <FunctionModal setNotifier={setNotifier} show={showModal} onSave={handleSaveFunction} onHide={() => setShowModal(false)}/>
+      <ConfirmDialogComponent dialogMessage={dialogMessage} dialogTitle={dialogTitle} show={showDialog} action={handleConfirmDialog}/>
     </div>
   );
 };
