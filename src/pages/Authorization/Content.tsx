@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import SideBar from '../../components/SideBar/Content';
 import LoadingSpinner from '../../components/LoadingSpiner/Content';
 import { useNavigate } from 'react-router-dom';
-import { deleteFunction, fetchAllFunctionRole } from './apis/FunctionRoleApi';
+import { deleteFunction, fetchAllFunctionRole, getAllFunction } from './apis/FunctionRoleApi';
 import FunctionTableComponent from '../../components/AuthTable/FunctionTableComponent';
 import FunctionRoleTableComponent from '../../components/AuthTable/FunctionRoleTableComponent';
 import FunctionModal from './FunctionModal/Content';
@@ -123,6 +123,44 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
 
   const fetchAllFunction = async () => {
     try {
+        const response = await getAllFunction();
+        const roleId = response.headers.get('X-Role-Headers');
+        if(roleId === '1') {
+          setAdmin(true)
+        } else {
+          setAdmin(false)
+        }
+
+        // handle error
+        if(response.data && response.ok) {
+            setPermissions(response.data);
+        }else if(response.status === 404) {
+          setNotifier({
+              type: "warning",
+              message: response.error
+            })
+        } else if(response.status === 403){
+          setNotifier({
+              type: "warning",
+              message: response.error
+            })
+          navigate('/auth-error')
+        } else {
+          setNotifier({
+              type: "danger",
+              message: response.error
+            })
+        }
+    } catch(e) {
+        setNotifier({
+              type: "danger",
+              message: e
+        })
+    }
+  }
+
+  const loadFunctionRole = async () => {
+    try {
         const response = await fetchAllFunctionRole();
         const roleId = response.headers.get('X-Role-Headers');
         if(roleId === '1') {
@@ -160,7 +198,8 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
   }
 
   useEffect(() => {
-    fetchAllFunction()
+    fetchAllFunction();
+    loadFunctionRole();
   }, [])
 
   return (
