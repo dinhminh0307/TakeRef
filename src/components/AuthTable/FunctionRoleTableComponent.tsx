@@ -1,4 +1,5 @@
 import type React from "react";
+import { useState } from "react";
 
 interface FunctionRoleProp {
     handleNewFunctionRole? : any;
@@ -6,6 +7,14 @@ interface FunctionRoleProp {
     functionRole: any[];
 }
 const FunctionRoleTableComponent: React.FC<FunctionRoleProp> = ({handleNewFunctionRole, handleFunctionRoleAction, functionRole}) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowPerPage = 5;
+
+  const indexOfLastRow = currentPage * rowPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowPerPage;
+  const currentRows = functionRole.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(functionRole.length / rowPerPage);
+
     return(
         <>
             <div className="mb-4">
@@ -34,51 +43,68 @@ const FunctionRoleTableComponent: React.FC<FunctionRoleProp> = ({handleNewFuncti
                     </tr>
                   </thead>
                   <tbody>
-                    {/* Sample rows for demonstration */}
-                    <tr className="border-bottom">
-                      <td className="px-4 py-3 border-0">
-                        <span className="fw-medium">User</span>
-                      </td>
-                      <td className="px-4 py-3 border-0">
-                        <a 
-                          href="#" 
-                          className="text-primary text-decoration-none fw-medium"
-                        >
-                          1
-                        </a>
-                      </td>
-                      <td className="px-4 py-3 text-muted border-0" style={{ maxWidth: '200px' }}>
-                        <span>
-                          Thursday
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-muted border-0" style={{ maxWidth: '200px' }}>
-                        <span>
-                          Friday
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 border-0">
-                        <div className="d-flex gap-1">
-                          <button
-                            className="btn btn-sm p-1"
-                            onClick={() => handleFunctionRoleAction('edit', 1)}
-                            title="Edit"
-                            style={{ width: '24px', height: '24px', border: 'none', backgroundColor: 'transparent' }}
-                          >
-                            <i className="bi bi-pencil text-primary"></i>
-                          </button>
-                          <button
-                            className="btn btn-sm p-1"
-                            onClick={() => handleFunctionRoleAction('delete', 1)}
-                            title="Delete"
-                            style={{ width: '24px', height: '24px', border: 'none', backgroundColor: 'transparent' }}
-                          >
-                            <i className="bi bi-trash text-danger"></i>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    {/* Add more sample rows if needed */}
+                    {
+                      currentRows.map((funcRole, index) => (
+                      <tr key={funcRole.functionRoleId} className={index < currentRows.length - 1 ? 'border-bottom' : ''}>
+                        <td className="px-4 py-3 border-0">
+                          <span className="fw-medium">{funcRole.role.role}</span>
+                        </td>
+                        <td className="px-4 py-3 border-0">
+                          {funcRole.function !== null ? (
+                            <a 
+                              className="text-primary text-decoration-none fw-medium"
+                            >
+                              {funcRole.function.function_id}
+                            </a>
+                          ) : (
+                            <span className="text-muted">No Function ID</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 border-0">
+                          {funcRole.createdAt !== null ? (
+                            <span className="badge bg-info text-dark">
+                              {funcRole.createdAt}
+                            </span>
+                          ) : (
+                            <span className="text-muted">No Created At Date</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 border-0">
+                          <span className= "badge  bg-success">
+                            {funcRole.modifiedAt !== null  ? funcRole.modifiedAt : 'Not modified yet'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 border-0">
+                          <div className="d-flex gap-1">
+                            <button
+                              className="btn btn-sm p-1"
+                              onClick={() => handleFunctionRoleAction('edit', funcRole)}
+                              title="Edit"
+                              style={{ width: '24px', height: '24px', border: 'none', backgroundColor: 'transparent' }}
+                            >
+                              <i className="bi bi-pencil text-primary"></i>
+                            </button>
+                            <button
+                              className="btn btn-sm p-1"
+                              onClick={() => handleFunctionRoleAction('view', funcRole)}
+                              title="View Details"
+                              style={{ width: '24px', height: '24px', border: 'none', backgroundColor: 'transparent' }}
+                            >
+                              <i className="bi bi-eye text-info"></i>
+                            </button>
+                            <button
+                              className="btn btn-sm p-1"
+                              onClick={() => handleFunctionRoleAction('delete', funcRole)}
+                              title="Delete"
+                              style={{ width: '24px', height: '24px', border: 'none', backgroundColor: 'transparent' }}
+                            >
+                              <i className="bi bi-trash text-danger"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                    }
                   </tbody>
                 </table>
               </div>
@@ -99,6 +125,44 @@ const FunctionRoleTableComponent: React.FC<FunctionRoleProp> = ({handleNewFuncti
                 </div>
               )}
             </div>
+            <nav aria-label="Page navigation">
+              <ul className="pagination">
+                {/* Previous button */}
+                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                  <button 
+                    className="page-link" 
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  >
+                    Previous
+                  </button>
+                </li>
+
+                {/* Page numbers */}
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <li 
+                    key={i} 
+                    className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}
+                  >
+                    <button 
+                      className="page-link" 
+                      onClick={() => setCurrentPage(i + 1)}
+                    >
+                      {i + 1}
+                    </button>
+                  </li>
+                ))}
+
+                {/* Next button */}
+                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                  <button 
+                    className="page-link" 
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  >
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </nav>
           </div>
         </>
     )

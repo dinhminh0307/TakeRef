@@ -31,6 +31,7 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
   const [currentTable, setCurrentTable] = useState<CurrentTableAction>({functionTable: false, functionRoleTable:false});
   const [objectAction, setObjectAction] = useState<any>();
 
+  // function role 
   const navigate = useNavigate();
 
   const handleSidebarClick = (itemId: string) => {
@@ -171,7 +172,7 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
 
         // handle error
         if(response.data && response.ok) {
-            setPermissions(response.data);
+            setFunctionRole(response.data);
         }else if(response.status === 404) {
           setNotifier({
               type: "warning",
