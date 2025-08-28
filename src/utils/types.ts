@@ -1,0 +1,1 @@
+export type FunctionRoleTableHeaders = 'Role'|'Function ID'|'Created At'|'Modified At';

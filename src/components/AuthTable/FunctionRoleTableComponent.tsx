@@ -5,15 +5,25 @@ interface FunctionRoleProp {
     handleNewFunctionRole? : any;
     handleFunctionRoleAction?: any;
     functionRole: any[];
+    sortFunctionRole?: any
 }
-const FunctionRoleTableComponent: React.FC<FunctionRoleProp> = ({handleNewFunctionRole, handleFunctionRoleAction, functionRole}) => {
+const FunctionRoleTableComponent: React.FC<FunctionRoleProp> = ({handleNewFunctionRole, handleFunctionRoleAction, functionRole, sortFunctionRole}) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [showIcon, setShowIcon] = useState(false);
+  const [showUpIcon, setShowUpIcon] = useState(true)
   const rowPerPage = 5;
 
   const indexOfLastRow = currentPage * rowPerPage;
   const indexOfFirstRow = indexOfLastRow - rowPerPage;
   const currentRows = functionRole.slice(indexOfFirstRow, indexOfLastRow);
   const totalPages = Math.ceil(functionRole.length / rowPerPage);
+
+  const filterElement = (e: any) => {
+    const text = e.currentTarget.textContent;
+    setShowIcon(true);
+    setShowUpIcon(!showUpIcon)
+    sortFunctionRole(text, showUpIcon);
+  }
 
     return(
         <>
@@ -35,11 +45,21 @@ const FunctionRoleTableComponent: React.FC<FunctionRoleProp> = ({handleNewFuncti
                 <table className="table table-hover mb-0">
                   <thead>
                     <tr style={{ backgroundColor: '#f8f9fa' }}>
-                      <th className="px-4 py-3 fw-semibold text-muted border-0" style={{ fontSize: '0.75rem', letterSpacing: '0.5px' }}>Role</th>
-                      <th className="px-4 py-3 fw-semibold text-muted border-0" style={{ fontSize: '0.75rem', letterSpacing: '0.5px' }}>Function ID</th>
-                      <th className="px-4 py-3 fw-semibold text-muted border-0" style={{ fontSize: '0.75rem', letterSpacing: '0.5px' }}>Created At</th>
-                      <th className="px-4 py-3 fw-semibold text-muted border-0" style={{ fontSize: '0.75rem', letterSpacing: '0.5px' }}>Modified At</th>
-                      <th className="px-4 py-3 fw-semibold text-muted border-0" style={{ fontSize: '0.75rem', letterSpacing: '0.5px' }}>Action</th>
+                      <th onClick={filterElement} className="px-4 py-3 fw-semibold text-muted border-0" style={{ fontSize: '0.75rem', letterSpacing: '0.5px' }}>
+                        {showIcon && (showUpIcon ? <i className="bi bi-sort-up" ></i> : <i className="bi bi-sort-down" ></i>)}Role
+                        </th>
+                      <th onClick={filterElement} className="px-4 py-3 fw-semibold text-muted border-0" style={{ fontSize: '0.75rem', letterSpacing: '0.5px' }}>
+                        {showIcon && (showUpIcon ? <i className="bi bi-sort-up" ></i> : <i className="bi bi-sort-down" ></i>)}Function ID
+                        </th>
+                      <th onClick={filterElement} className="px-4 py-3 fw-semibold text-muted border-0" style={{ fontSize: '0.75rem', letterSpacing: '0.5px' }}>
+                        {showIcon && (showUpIcon ? <i className="bi bi-sort-up" ></i> : <i className="bi bi-sort-down" ></i>)}Created At
+                        </th>
+                      <th onClick={filterElement} className="px-4 py-3 fw-semibold text-muted border-0" style={{ fontSize: '0.75rem', letterSpacing: '0.5px' }}>
+                        {showIcon && (showUpIcon ? <i className="bi bi-sort-up" ></i> : <i className="bi bi-sort-down" ></i>)}Modified At
+                        </th>
+                      <th onClick={filterElement} className="px-4 py-3 fw-semibold text-muted border-0" style={{ fontSize: '0.75rem', letterSpacing: '0.5px' }}>
+                        Action
+                        </th>
                     </tr>
                   </thead>
                   <tbody>

@@ -7,6 +7,7 @@ import FunctionTableComponent from '../../components/AuthTable/FunctionTableComp
 import FunctionRoleTableComponent from '../../components/AuthTable/FunctionRoleTableComponent';
 import FunctionModal from './FunctionModal/Content';
 import ConfirmDialogComponent from '../../components/ConfirmDialog/Content';
+import type { FunctionRoleTableHeaders } from '../../utils/types';
 
 interface AuthorizationPageProps {
   setNotifier?: any
@@ -203,6 +204,37 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
     loadFunctionRole();
   }, [])
 
+  const sortFunctionRole = (roleType: string, showUpIcon: boolean) => {
+    console.log(roleType)
+    if(showUpIcon) {
+      const sortedRow = [...functionRole].sort((a,b) => {
+        // if function_id of a - function id of b < 0 => mean a comes before b
+        if(roleType === 'Function ID') {
+          return a.function.function_id - b.function.function_id
+        } else if(roleType === 'Created At'){
+          return Date.parse(a.createdAt) - Date.parse(b.createdAt);
+        } else if(roleType === 'Modified At') {
+          return Date.parse(a.modifiedAt) - Date.parse(b.modifiedAt);
+        }
+        return a.role.role > b.role.role ? -1 : 1
+      })
+      setFunctionRole(sortedRow)
+    } else {
+      const sortedRow = [...functionRole].sort((a,b) => {
+        // if function_id of a - function id of b < 0 => mean a comes before b
+        if(roleType === 'Function ID') {
+          return b.function.function_id - a.function.function_id
+        } else if(roleType === 'Created At'){
+          return Date.parse(b.createdAt) - Date.parse(a.createdAt);
+        } else if(roleType === 'Modified At') {
+          return Date.parse(b.modifiedAt) - Date.parse(a.modifiedAt);
+        }
+        return b.role.role > a.role.role ? -1 : 1
+      })
+      setFunctionRole(sortedRow)
+    }
+  }
+
   return (
     <div className="d-flex" style={{ minHeight: '100vh' }}>
       {/* Sidebar */}
@@ -341,7 +373,7 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
           <FunctionTableComponent functionData={permissions} handleNewFunction={handleNewFunction} handlePermissionAction={handlePermissionAction}/>
 
           {/* Function Role Table */}
-          <FunctionRoleTableComponent handleFunctionRoleAction={handleFunctionRoleAction} handleNewFunctionRole={handleNewFunctionRole} functionRole={functionRole}/>
+          <FunctionRoleTableComponent sortFunctionRole={sortFunctionRole} handleFunctionRoleAction={handleFunctionRoleAction} handleNewFunctionRole={handleNewFunctionRole} functionRole={functionRole}/>
         </div>
       )}
       <FunctionModal data={objectAction} action={dialogAction} setNotifier={setNotifier} show={showModal} onSave={handleSaveFunction} onHide={() => setShowModal(false)}/>
