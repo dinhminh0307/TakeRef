@@ -8,6 +8,7 @@ import FunctionRoleTableComponent from '../../components/AuthTable/FunctionRoleT
 import FunctionModal from './FunctionModal/Content';
 import ConfirmDialogComponent from '../../components/ConfirmDialog/Content';
 import type { FunctionRoleTableHeaders } from '../../utils/types';
+import FunctionRoleModal from './FunctionRoleModal/Content';
 
 interface AuthorizationPageProps {
   setNotifier?: any
@@ -31,6 +32,7 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
   const [dialogAction, setDialogAction] = useState('');
   const [currentTable, setCurrentTable] = useState<CurrentTableAction>({functionTable: false, functionRoleTable:false});
   const [objectAction, setObjectAction] = useState<any>();
+  const [roles, setRoles] = useState<any[]>([]);
 
   // function role 
   const navigate = useNavigate();
@@ -67,7 +69,7 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
   };
 
   const handleNewFunctionRole = () => {
-
+    setShowModal(true)
   }
 
   const handleSaveFunction = (newFunction: any) => {
@@ -76,6 +78,16 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
           return prev.filter((f) => f.function_id != objectAction.function_id).concat(newFunction);
         } else {
           return [...prev, newFunction];
+        }
+    })
+  }
+
+  const handleSaveFunctionRole = (newFunctionRole: any) => {
+    setFunctionRole((prev) => {
+        if(dialogAction === 'edit') {
+          return prev.filter((f) => f.function_id != objectAction.function_id).concat(newFunctionRole);
+        } else {
+          return [...prev, newFunctionRole];
         }
     })
   }
@@ -161,6 +173,22 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
     }
   }
 
+  const getAvailableRole = (lstFunctionRole: any[]) => {
+    let fetchedRole = new Set<any>();
+    let savedRoleObject: any[] = []
+    lstFunctionRole.forEach(r => {
+      if(r.role !== null && r.role !== undefined && !fetchedRole.has(r.role.role_id)) {
+        fetchedRole.add(r.role.role_id);
+        savedRoleObject.push(r.role)
+      }
+    });
+    setRoles(savedRoleObject);
+  };
+
+  useEffect(() => {
+    getAvailableRole(functionRole);
+  }, [functionRole])
+
   const loadFunctionRole = async () => {
     try {
         const response = await fetchAllFunctionRole();
@@ -174,6 +202,9 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
         // handle error
         if(response.data && response.ok) {
             setFunctionRole(response.data);
+
+            //set available role data:
+            // getAvailableRole(response.data);
         }else if(response.status === 404) {
           setNotifier({
               type: "warning",
@@ -377,6 +408,7 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
         </div>
       )}
       <FunctionModal data={objectAction} action={dialogAction} setNotifier={setNotifier} show={showModal} onSave={handleSaveFunction} onHide={() => setShowModal(false)}/>
+      <FunctionRoleModal rolesData={roles} data={objectAction} action={dialogAction} setNotifier={setNotifier} show={showModal} onSave={handleSaveFunctionRole} onHide={() => setShowModal(false)}/>
       <ConfirmDialogComponent dialogMessage={dialogMessage} dialogTitle={dialogTitle} show={showDialog} action={handleConfirmDialog}/>
     </div>
   );
