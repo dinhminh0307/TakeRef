@@ -401,14 +401,14 @@ const AuthorizationPage: React.FC<AuthorizationPageProps> = ({setNotifier}) => {
           </div>
 
           {/* Permissions Table */}
-          <FunctionTableComponent functionData={permissions} handleNewFunction={handleNewFunction} handlePermissionAction={handlePermissionAction}/>
+          <FunctionTableComponent isModal={false} functionData={permissions} handleNewFunction={handleNewFunction} handlePermissionAction={handlePermissionAction}/>
 
           {/* Function Role Table */}
           <FunctionRoleTableComponent sortFunctionRole={sortFunctionRole} handleFunctionRoleAction={handleFunctionRoleAction} handleNewFunctionRole={handleNewFunctionRole} functionRole={functionRole}/>
         </div>
       )}
       <FunctionModal data={objectAction} action={dialogAction} setNotifier={setNotifier} show={showModal} onSave={handleSaveFunction} onHide={() => setShowModal(false)}/>
-      <FunctionRoleModal rolesData={roles} data={objectAction} action={dialogAction} setNotifier={setNotifier} show={showModal} onSave={handleSaveFunctionRole} onHide={() => setShowModal(false)}/>
+      <FunctionRoleModal functionData={permissions} rolesData={roles} data={objectAction} action={dialogAction} setNotifier={setNotifier} show={showModal} onSave={handleSaveFunctionRole} onHide={() => setShowModal(false)}/>
       <ConfirmDialogComponent dialogMessage={dialogMessage} dialogTitle={dialogTitle} show={showDialog} action={handleConfirmDialog}/>
     </div>
   );

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { addFunction, addFunctionRole, updateFunction, updateFunctionRole } from "../apis/FunctionRoleApi";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpiner/Content";
+import FunctionTableComponent from "../../../components/AuthTable/FunctionTableComponent";
 
 interface FunctionRoleModalProp {
     show: boolean
@@ -12,17 +13,18 @@ interface FunctionRoleModalProp {
     action?: string;
     data?: any;
     rolesData?: any
+    functionData?: any
 }
 
-export default function FunctionRoleModal({show, onHide, onSave, setNotifier, action, data, rolesData}: FunctionRoleModalProp) {
-    const [role, setRole] = useState('');
-    const [frontendUrl, setFrontendUrl] = useState('')
+export default function FunctionRoleModal({show, onHide, onSave, setNotifier, action, data, rolesData, functionData}: FunctionRoleModalProp) {
+    const [role, setRole] = useState();
+    const [selectedFunction, setSelectedFunction] = useState<any | null>(null)
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate()
 
     const handleSave = async () => {
       try {
-        if(!role.trim() && !frontendUrl.trim()) {
+        if((role === null || role === undefined) && (selectedFunction === null || selectedFunction === undefined)) {
           setNotifier({
               type: "warning",
               message: 'Please do not leave both field empty'
@@ -31,10 +33,11 @@ export default function FunctionRoleModal({show, onHide, onSave, setNotifier, ac
         }
         setLoading(true);
         const body = {
-          function_id: data ? data.function_id : 0,
-          frontendUrl: frontendUrl.trim() ?? null,
-          apiEndpoint: role.trim() ?? null,
-          sideBarItems: null
+          function_role_id: data ? data.function_role_id : 0,
+          function: selectedFunction,
+          role: role,
+          created_at: null,
+          modified_at: null
         }
 
         let response:any;
@@ -69,17 +72,21 @@ export default function FunctionRoleModal({show, onHide, onSave, setNotifier, ac
     }
 
     const handleClose = () => {
-        setRole('');
-        setFrontendUrl('');
+        setRole(undefined);
+        setSelectedFunction(null);
         onHide();
     }
 
     useEffect(() => {
       if(data) {
-        setRole(data.apiEndpoint || '');
-        setFrontendUrl(data.frontendUrl || '');
+        setRole(data.role || undefined);
+        setSelectedFunction(data.function.function || null);
       }
     }, [data])
+
+    useEffect(() => {
+        console.log('Select Function: ', selectedFunction);
+    }, [selectedFunction])
 
     if(!show) {
         return;
@@ -91,7 +98,7 @@ export default function FunctionRoleModal({show, onHide, onSave, setNotifier, ac
           <div className="modal-dialog modal-lg">
             <div className="modal-content">
               <div className="modal-header border-0 pb-0">
-                <h5 className="modal-title fw-bold">Add New Function</h5>
+                <h5 className="modal-title fw-bold">Add New Function Role</h5>
                 <button 
                   type="button" 
                   className="btn-close" 
@@ -104,18 +111,21 @@ export default function FunctionRoleModal({show, onHide, onSave, setNotifier, ac
                 <form>
                   {/* API Field */}
                   <div className="mb-3">
-                    <label htmlFor="endpoint" className="form-label fw-semibold">
+                    <label htmlFor="role" className="form-label fw-semibold">
                         Role <span className="text-danger">*</span>
                     </label>
                     <select
                         className="form-select"
-                        id="endpoint"
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
+                        id="role"
+                        value={role ? JSON.stringify(role) : ""}
+                        onChange={(e) => {
+                            const object = JSON.parse(e.target.value)
+                            setRole(object)
+                        }}
                     >
                         <option value="">-- Select Role --</option>
                         {rolesData.map((r: any) => (
-                            <option key={r.role_id} value={r.role}>
+                            <option key={r.role_id} value={JSON.stringify(r)}>
                             {r.role}
                             </option>
                         ))}
@@ -124,16 +134,7 @@ export default function FunctionRoleModal({show, onHide, onSave, setNotifier, ac
 
                   {/* Frontend Path Field */}
                   <div className="mb-3">
-                    <label htmlFor="citationUrl" className="form-label fw-semibold">
-                      Function <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="frontendUrl"
-                      value={frontendUrl}
-                      onChange={(e) => setFrontendUrl(e.target.value)}
-                    />
+                    <FunctionTableComponent selectFunction={setSelectedFunction} isModal={true} functionData={functionData}/>
                   </div>
                 </form>
               </div>
@@ -151,7 +152,7 @@ export default function FunctionRoleModal({show, onHide, onSave, setNotifier, ac
                   className="btn btn-warning fw-semibold"
                   onClick={handleSave}
                 >
-                  Save Function
+                  Save Function Role
                 </button>
               </div>
             </div>
