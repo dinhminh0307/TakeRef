@@ -95,7 +95,7 @@ const SideBar: React.FC<SidebarProps> = ({
   
   // Hide courses, citationType, and transactions when admin is false
   if (item.id === 'courses' || item.id === 'citationType' || item.id === 'transactions'
-      || item.id === 'subscriptionType'
+      || item.id === 'subscriptionType' || item.id === 'authorization'
   ) {
     return admin === true;
   }
